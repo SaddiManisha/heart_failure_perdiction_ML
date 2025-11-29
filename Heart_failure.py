@@ -107,3 +107,95 @@ sns.heatmap(
 plt.title("Correlation Heatmap of Heart Failure Dataset")
 plt.tight_layout()
 plt.show()
+
+# Preprocessing
+
+# Separate independent and dependant features
+X = hr_df.drop("DEATH_EVENT", axis=1)
+y = hr_df["DEATH_EVENT"]
+
+print("Data separated: Features (X) and Target (y)")
+print("X shape:", X.shape)
+print("y shape:", y.shape)
+
+# Split into train and test sets
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.2, random_state=42, stratify=y)
+
+print("Data split completed.")
+print("Train shape:", X_train.shape)
+print("Test shape:", X_test.shape)
+
+# train data - Target distribution
+print("Target distribution:\n", y_train.value_counts())
+
+# test data - Target distribution
+print("Target distribution:\n", y_test.value_counts())
+
+# Balance ONLY the training data using SMOTE
+sm = SMOTE(random_state=42)
+X_train_bal, y_train_bal = sm.fit_resample(X_train, y_train)
+
+print("Class distribution AFTER SMOTE:")
+print(y_train_bal.value_counts())
+
+
+# Standardization (Scaling the data)
+scaler = StandardScaler()
+
+# Fit on training data and transform both
+X_train_scaled = scaler.fit_transform(X_train_bal)
+X_test_scaled = scaler.transform(X_test)
+
+print("Data standardized using StandardScaler")
+
+# Print full data after scaling
+X_train_scaled
+
+# checking first row data
+X_train_scaled[3]
+
+# Model implementation
+
+## Model Evalution function
+
+def evaluate_model(model, X_test, y_test, model_name="Model"):
+    # Predict
+    y_pred = model.predict(X_test)
+
+    # Print classification report
+    print(f"\n {model_name} - Classification Report")
+    print(classification_report(y_test, y_pred))
+
+    # Confusion matrix
+    cm = confusion_matrix(y_test, y_pred)
+
+    disp = ConfusionMatrixDisplay(
+        confusion_matrix=cm,
+        display_labels=["Survived (0)", "Death (1)"]
+    )
+
+    disp.plot(cmap="Blues")
+    plt.title(f"Confusion Matrix - {model_name}")
+    plt.xlabel("Predicted Label")
+    plt.ylabel("True Label")
+    plt.show()
+
+## 1. Logistic Regression
+
+# Train Logistic Regression
+lr = LogisticRegression()
+lr.fit(X_train_scaled, y_train_bal)
+
+print(lr.coef_)
+print(lr.intercept_)
+
+evaluate_model(lr,X_test_scaled, y_test, "Logistic Regression")
+
+## 2. KNN
+
+# Train K-Nearest Neighbors
+knn = KNeighborsClassifier(n_neighbors=5)
+knn.fit(X_train_scaled, y_train_bal)
+
+evaluate_model(knn,X_test_scaled, y_test, "KNN")
