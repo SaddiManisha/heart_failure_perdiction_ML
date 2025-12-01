@@ -199,3 +199,12 @@ knn = KNeighborsClassifier(n_neighbors=5)
 knn.fit(X_train_scaled, y_train_bal)
 
 evaluate_model(knn,X_test_scaled, y_test, "KNN")
+
+
+ 
+# Random Forest Model
+rf_model = RandomForestClassifier(random_state=42)
+rf_model.fit(X_train_scaled, y_train_bal)
+
+evaluate_model(rf_model, X_test_scaled, y_test, "Random Forest")
+ 
