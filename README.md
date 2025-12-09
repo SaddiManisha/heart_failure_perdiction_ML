@@ -85,5 +85,33 @@ Trained three ML models:
 
 - Logistic Regression  
 - K-Nearest Neighbors (KNN)  
-- Random Forest Classifier  
+- Random Forest Classifier
+
+  ### 7. Hyperparameter Tuning
+Used GridSearchCV to optimize:
+
+- Regularization strength (C) for Logistic Regression  
+- k-value & weights for KNN  
+- Number of trees, depth, and criterion for Random Forest  
+
+### 8. Evaluation Metrics
+Models evaluated with:
+
+- Accuracy  
+- Precision  
+- Recall  
+- F1-score  
+- Confusion Matrix  
+
+---
+
+## Results
+
+| Model | Accuracy |
+|-------|----------|
+| **Logistic Regression** | 81% |
+| **KNN** | 98% |
+| **Random Forest** | 99% |
+
+
 
