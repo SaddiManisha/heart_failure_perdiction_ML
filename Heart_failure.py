@@ -38,6 +38,9 @@ print(hr_df.info())
 # Checking Statistics values
 hr_df.describe().T
 
+# checking missing values
+print(hr_df.isnull().sum())
+
 # checking target feature count
 print(hr_df['DEATH_EVENT'].value_counts())
 
@@ -204,5 +207,67 @@ rf_model = RandomForestClassifier(random_state=42)
 rf_model.fit(X_train_scaled, y_train_bal)
 
 evaluate_model(rf_model, X_test_scaled, y_test, "Random Forest")
- 
- 
+
+# Hyperparameter tuning
+
+
+## 1. Logistic Regression Tuning
+
+# Logistic Regression Tuning
+param_grid_lr = {
+    "C": [0.1, 1, 10],
+    "solver": ["liblinear", "lbfgs"]
+}
+
+grid_lr = GridSearchCV(LogisticRegression(max_iter=1000),
+                       param_grid_lr,
+                       cv=3,
+                       scoring="recall")
+
+grid_lr.fit(X_train_scaled, y_train_bal)
+
+print("Best Logistic Regression Params:", grid_lr.best_params_)
+
+best_lr = grid_lr.best_estimator_
+evaluate_model(best_lr, X_test_scaled, y_test, "Logistic Regression (Tuned)")
+
+## 2. KNN Tuning
+# KNN Tuning
+param_grid_knn = {
+    "n_neighbors": [3, 5, 7, 9],
+    "weights": ["uniform", "distance"]
+}
+
+grid_knn = GridSearchCV(KNeighborsClassifier(),
+                        param_grid_knn,
+                        cv=3,
+                        scoring="recall")
+
+grid_knn.fit(X_train_scaled, y_train_bal)
+
+print("Best KNN Params:", grid_knn.best_params_)
+
+best_knn = grid_knn.best_estimator_
+evaluate_model(best_knn, X_test_scaled, y_test, "KNN (Tuned)")
+
+## 3. Random Forest Tuning
+
+# Random Forest Tuning
+param_grid_rf = {
+    "n_estimators": [100, 200],
+    "max_depth": [None, 5, 10],
+    "criterion": ["gini", "entropy"]
+}
+
+grid_rf = GridSearchCV(RandomForestClassifier(random_state=42),
+                       param_grid_rf,
+                       cv=3,
+                       scoring="recall")
+
+grid_rf.fit(X_train_scaled, y_train_bal)
+
+print("Best Random Forest Params:", grid_rf.best_params_)
+
+best_rf = grid_rf.best_estimator_
+evaluate_model(best_rf, X_test_scaled, y_test, "Random Forest (Tuned)")
+
