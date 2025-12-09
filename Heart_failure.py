@@ -38,9 +38,6 @@ print(hr_df.info())
 # Checking Statistics values
 hr_df.describe().T
 
-# checking missing values
-print(hr_df.isnull().sum())
-
 # checking target feature count
 print(hr_df['DEATH_EVENT'].value_counts())
 
@@ -208,3 +205,24 @@ rf_model.fit(X_train_scaled, y_train_bal)
 
 evaluate_model(rf_model, X_test_scaled, y_test, "Random Forest")
  
+ # Hyperparameter-tuning
+
+## 1. Logistic Regression Tuning
+
+# Logistic Regression Tuning
+param_grid_lr = {
+    "C": [0.1, 1, 10],
+    "solver": ["liblinear", "lbfgs"]
+}
+
+grid_lr = GridSearchCV(LogisticRegression(max_iter=1000),
+                       param_grid_lr,
+                       cv=3,
+                       scoring="recall")
+
+grid_lr.fit(X_train_scaled, y_train_bal)
+
+print("Best Logistic Regression Params:", grid_lr.best_params_)
+
+best_lr = grid_lr.best_estimator_
+evaluate_model(best_lr, X_test_scaled, y_test, "Logistic Regression (Tuned)")
